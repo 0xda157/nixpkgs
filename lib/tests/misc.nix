@@ -58,6 +58,7 @@ let
     foldr
     functionArgs
     generators
+    genAttrs
     genList
     getExe
     getExe'
@@ -1970,6 +1971,14 @@ runTests {
         hello = true;
         world = false;
       };
+    };
+  };
+
+  testGenAttrs = {
+    expr = genAttrs [ "foo" "bar" ] (name: "x_" + name);
+    expected = {
+      foo = "x_foo";
+      bar = "x_bar";
     };
   };
 
