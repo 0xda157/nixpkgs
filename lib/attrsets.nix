@@ -1191,6 +1191,74 @@ rec {
 
     # Inputs
 
+    `f`
+
+    : A function, given the name of the attribute, returns the attribute's value.
+
+    `names`
+
+    : Names of values in the resulting attribute set.
+
+    # Type
+
+    ```
+    genAttrs :: (String -> Any) -> [ String ] -> AttrSet
+    ```
+
+    # Examples
+    :::{.example}
+    ## `lib.attrsets.mapListToAttrs` usage example
+
+    ```nix
+    mapListToAttrs (name: "x_" + name) [ "foo" "bar" ]
+    => { foo = "x_foo"; bar = "x_bar"; }
+    ```
+
+    :::
+  */
+  mapListToAttrs = f: mapListToAttrs' (n: nameValuePair n (f n));
+
+  /**
+    Like `mapListToAttrs`, but allows the name of each attribute to be
+    changed in addition to the value.  The applied function should
+    return both the new name and value as a `nameValuePair`.
+
+    # Inputs
+
+    `f`
+
+    : A function, given an items value, returns a new `nameValuePair`.
+
+    `list`
+
+    : List to map over.
+
+    # Type
+
+    ```
+    mapAttrs' :: (Any -> { name :: String; value :: Any; }) -> [ Any ] -> AttrSet
+    ```
+
+    # Examples
+    :::{.example}
+    ## `lib.attrsets.mapListToAttrs'` usage example
+
+    ```nix
+    mapListToAttrs' (item: nameValuePair ("foo_" + item) ("bar-" + item))
+       [ "a" "b" ]
+    => { foo_a = "bar-a"; foo_b = "bar-b"; }
+    ```
+
+    :::
+  */
+  mapListToAttrs' = f: list: listToAttrs (map (n: f n) list);
+
+  /**
+    Generate an attribute set by mapping a function over a list of
+    attribute names. Same as `mapListToAttrs`, but the arguments flipped.
+
+    # Inputs
+
     `names`
 
     : Names of values in the resulting attribute set.
@@ -1216,7 +1284,7 @@ rec {
 
     :::
   */
-  genAttrs = names: f: listToAttrs (map (n: nameValuePair n (f n)) names);
+  genAttrs = names: f: mapListToAttrs f names;
 
   /**
     Check whether the argument is a derivation. Any set with

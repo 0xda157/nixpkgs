@@ -79,6 +79,8 @@ let
     makeOverridable
     mapAttrs
     mapCartesianProduct
+    mapListToAttrs
+    mapListToAttrs'
     matchAttrs
     mergeAttrs
     meta
@@ -1979,6 +1981,28 @@ runTests {
     expected = {
       foo = "x_foo";
       bar = "x_bar";
+    };
+  };
+
+  testMapListToAttrs = {
+    expr = mapListToAttrs (name: "x_" + name) [
+      "foo"
+      "bar"
+    ];
+    expected = {
+      foo = "x_foo";
+      bar = "x_bar";
+    };
+  };
+
+  testMapListToAttrs' = {
+    expr = mapListToAttrs' (item: nameValuePair ("foo_" + item) ("bar-" + item)) [
+      "a"
+      "b"
+    ];
+    expected = {
+      foo_a = "bar-a";
+      foo_b = "bar-b";
     };
   };
 

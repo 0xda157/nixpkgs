@@ -206,6 +206,8 @@ let
         concatMapAttrs
         mapAttrsRecursive
         mapAttrsRecursiveCond
+        mapListToAttrs
+        mapListToAttrs'
         genAttrs
         isDerivation
         toDerivation
